@@ -1,1 +1,3 @@
 rootProject.name = 'otus_main_patterns_2021_04'
+
+include 'hw1-solid'
