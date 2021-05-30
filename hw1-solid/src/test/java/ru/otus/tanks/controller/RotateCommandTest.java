@@ -1,7 +1,7 @@
 package ru.otus.tanks.controller;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
 
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import ru.otus.core.controller.exception.CommandException;
+import ru.otus.core.domain.exception.ReadPropertyException;
 import ru.otus.tanks.adapters.RotatableAdapter;
 import ru.otus.tanks.domain.GameObject;
 
@@ -57,7 +57,7 @@ public class RotateCommandTest {
 
         //when
         //then
-        assertThrows(CommandException.class, () -> rotateCommand.execute());
+        assertThrows(ReadPropertyException.class, () -> rotateCommand.execute());
     }
 
     @DisplayName("Попытка повернуть объект, у которого невозможно прочитать значение угловой скорости, приводит к ошибке")
@@ -72,7 +72,7 @@ public class RotateCommandTest {
 
         //when
         //then
-        assertThrows(CommandException.class, () -> rotateCommand.execute());
+        assertThrows(ReadPropertyException.class, () -> rotateCommand.execute());
     }
 
     @DisplayName("Попытка повернуть объект, у которого невозможно прочитать количество направлений, приводит к ошибке")
@@ -87,7 +87,7 @@ public class RotateCommandTest {
 
         //when
         //then
-        assertThrows(CommandException.class, () -> rotateCommand.execute());
+        assertThrows(ReadPropertyException.class, () -> rotateCommand.execute());
     }
 
 }

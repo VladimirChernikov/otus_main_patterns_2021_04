@@ -22,9 +22,4 @@ public class GameObject implements DomainObject {
         this.props.put( propertyName, propertyValue );
 	}
 
-    @Override
-    public boolean hasProperty( String propertyName ) {
-        return this.props.containsKey( propertyName );
-    }
-
 }

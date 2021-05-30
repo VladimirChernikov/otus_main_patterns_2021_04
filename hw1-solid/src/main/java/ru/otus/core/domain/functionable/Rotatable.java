@@ -1,12 +1,15 @@
 package ru.otus.core.domain.functionable;
 
+import ru.otus.core.domain.exception.ReadPropertyException;
+import ru.otus.core.domain.exception.WritePropertyException;
+
 public interface Rotatable {
 
-    public Integer getDirection();
-    public void setDirection(Integer newDirection);
+    Integer getDirection() throws ReadPropertyException;
+    void setDirection(Integer newDirection) throws WritePropertyException;
 
-    public Integer getAngularVelocity();
+    Integer getAngularVelocity() throws ReadPropertyException;
 
-    public Integer getDirectionsCount();
+    Integer getDirectionsCount() throws ReadPropertyException;
 
 }

@@ -19,8 +19,8 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
     }
-    // testLogging.showStandardStreams = true
-    // testLogging.exceptionFormat = 'full'
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
 }
 
 compileJava.options.encoding = 'UTF-8'
