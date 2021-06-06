@@ -13,7 +13,16 @@ public class TerminateFlowableCommand implements Command {
     
     @Override
     public void execute() {
-        this.flowable.terminate();
+        var commandQueue = this.flowable.getCommandQueue();
+        if ( commandQueue.isEmpty() )  {
+            this.flowable.getThread().interrupt();
+        } else {
+            try {
+				commandQueue.put( new TerminateFlowableCommand( this.flowable ) );
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
     }
 
 }

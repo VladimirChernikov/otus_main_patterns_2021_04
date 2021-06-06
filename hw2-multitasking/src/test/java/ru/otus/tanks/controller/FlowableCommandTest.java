@@ -34,7 +34,7 @@ public class FlowableCommandTest {
         flowProps.put("FLOWABLE.TERMINATE_FORCE",Boolean.FALSE);
         flowProps.put("FLOWABLE.TERMINATED",Boolean.FALSE);
         var queue = new LinkedBlockingDeque<Command>();
-        flowProps.put("FLOWABLE.QUEUE", queue);
+        flowProps.put("FLOWABLE.COMMAND_QUEUE", queue);
     }
 
     @DisplayName("После команды старт поток запущен")
@@ -53,7 +53,7 @@ public class FlowableCommandTest {
 
         //
         var flow = new FlowableAdapter( new GameObject( flowProps ) );
-        flow.appendCommand(command);
+        flow.getCommandQueue().put(command);
 
         var flowableCommand = new FlowableCommand( flow );
 
@@ -76,10 +76,10 @@ public class FlowableCommandTest {
         var flow = new FlowableAdapter( new GameObject( flowProps ) );
         var terminateCommand = new TerminateForceFlowableCommand(flow);
 
-        flow.appendCommand( command );
-        flow.appendCommand( command );
-        flow.appendCommand( terminateCommand );
-        flow.appendCommand( anotherCommand );
+        flow.getCommandQueue().put( command );
+        flow.getCommandQueue().put( command );
+        flow.getCommandQueue().put( terminateCommand );
+        flow.getCommandQueue().put( anotherCommand );
 
         var flowableCommand = new FlowableCommand( flow );
 
@@ -89,7 +89,7 @@ public class FlowableCommandTest {
         // then
         assertTimeout(Duration.ofSeconds(1), 
                 () -> {
-                    while ( !flow.isTerminated() )  { }
+                    while ( flow.getThread().isAlive() ) { }
                 }
                 );
         verify( command, times(2) ).execute();
@@ -106,12 +106,12 @@ public class FlowableCommandTest {
         var flow = new FlowableAdapter( new GameObject( flowProps ) );
         var terminateCommand = new TerminateFlowableCommand(flow);
 
-        flow.appendCommand( command );
-        flow.appendCommand( command );
-        flow.appendCommand( terminateCommand );
-        flow.appendCommand( anotherCommand );
-        flow.appendCommand( anotherCommand );
-        flow.appendCommand( anotherCommand );
+        flow.getCommandQueue().put( command );
+        flow.getCommandQueue().put( command );
+        flow.getCommandQueue().put( terminateCommand );
+        flow.getCommandQueue().put( anotherCommand );
+        flow.getCommandQueue().put( anotherCommand );
+        flow.getCommandQueue().put( anotherCommand );
 
         var flowableCommand = new FlowableCommand( flow );
 
@@ -121,7 +121,7 @@ public class FlowableCommandTest {
         // then
         assertTimeout(Duration.ofSeconds(1), 
                 () -> {
-                    while ( !flow.isTerminated() )  { }
+                    while ( flow.getThread().isAlive() )  { }
                 }
                 );
         verify( command, times(2) ).execute();

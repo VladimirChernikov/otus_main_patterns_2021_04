@@ -1,7 +1,9 @@
 package ru.otus.tanks.adapters;
 
+import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 import ru.otus.core.controller.Command;
 import ru.otus.core.domain.DomainObject;
@@ -12,87 +14,19 @@ import ru.otus.core.domain.functionable.Flowable;
 public class FlowableAdapter implements Flowable {
 
     private DomainObject object;
+    private Thread thread;
 
     public FlowableAdapter( DomainObject object ) {
         this.object = object;
     }
 
-    @Override
-    public Command waitCommand() throws ReadPropertyException {
-        Command result = null;
-        try {
-            result = this.getQueue().takeFirst();
-            if (result == null) {
-                throw new ReadPropertyException( String.format("Unable to wait for the next command for object %s", this.object) );
-            }
-        } catch(Exception e){
-            throw new ReadPropertyException(e);
-        }
-        return result;
-    }
+	@Override
+	public Thread getThread() throws ReadPropertyException {
+        Thread result = null;
+        String propertyName = "FLOWABLE.THREAD";
 
-    @Override
-    public Command peekCommand() throws ReadPropertyException {
-        Command result = null;
         try {
-            result = this.getQueue().peek();
-        } catch(Exception e){
-            throw new ReadPropertyException(e);
-        }
-        return result;
-    }
-
-    @Override
-    public void appendCommand(Command cmd) throws WritePropertyException {
-        try {
-            this.getQueue().putLast(cmd);
-        } catch(Exception e){
-            throw new WritePropertyException(e);
-        }
-    }
-
-    @Override
-    public void prependCommand(Command cmd) throws WritePropertyException {
-        try {
-            this.getQueue().putFirst(cmd);
-        } catch(Exception e){
-            throw new WritePropertyException(e);
-        }
-    }
-
-    @Override
-    public void terminate() throws WritePropertyException {
-        try {
-            this.object.setProperty("FLOWABLE.TERMINATE", true);
-        } catch(Exception e){
-            throw new WritePropertyException(e);
-        }
-    }
-
-    @Override
-    public void terminateForce() throws WritePropertyException {
-        try {
-            this.object.setProperty("FLOWABLE.TERMINATE_FORCE", true);
-        } catch(Exception e){
-            throw new WritePropertyException(e);
-        }
-    }
-
-    @Override
-    public void terminated() throws WritePropertyException {
-        try {
-            this.object.setProperty("FLOWABLE.TERMINATED", true);
-        } catch(Exception e){
-            throw new WritePropertyException(e);
-        }
-    }
-
-    @Override
-    public boolean isTerminating() throws ReadPropertyException {
-        Boolean result = null;
-        String propertyName = "FLOWABLE.TERMINATE";
-        try {
-            result = (Boolean)this.object.getProperty(propertyName);
+            result = (Thread)this.object.getProperty(propertyName);
             if (result == null) {
                 throw new ReadPropertyException( String.format("Unable to read property %s of object %s", propertyName, this.object) );
             }
@@ -100,41 +34,21 @@ public class FlowableAdapter implements Flowable {
             throw new ReadPropertyException(e);
         }
         return result;
-    }
+	}
 
-    @Override
-    public boolean isTerminatingForce() throws ReadPropertyException {
-        Boolean result = null;
-        String propertyName = "FLOWABLE.TERMINATE_FORCE";
+	@Override
+	public void setThread(Thread thread) throws WritePropertyException {
         try {
-            result = (Boolean)this.object.getProperty(propertyName);
-            if (result == null) {
-                throw new ReadPropertyException( String.format("Unable to read property %s of object %s", propertyName, this.object) );
-            }
+            this.object.setProperty("FLOWABLE.THREAD", thread);
         } catch(Exception e){
-            throw new ReadPropertyException(e);
+            throw new WritePropertyException(e);
         }
-        return result;
-    }
+	}
 
-    @Override
-    public boolean isTerminated() throws ReadPropertyException {
-        Boolean result = null;
-        String propertyName = "FLOWABLE.TERMINATED";
-        try {
-            result = (Boolean)this.object.getProperty(propertyName);
-            if (result == null) {
-                throw new ReadPropertyException( String.format("Unable to read property %s of object %s", propertyName, this.object) );
-            }
-        } catch(Exception e){
-            throw new ReadPropertyException(e);
-        }
-        return result;
-    }
-
-    private BlockingDeque<Command> getQueue() {
+	@Override
+	public BlockingQueue<Command> getCommandQueue() throws ReadPropertyException {
         BlockingDeque<Command> result = null;
-        String propertyName = "FLOWABLE.QUEUE";
+        String propertyName = "FLOWABLE.COMMAND_QUEUE";
 
         try {
             result = (BlockingDeque<Command>)this.object.getProperty(propertyName);
@@ -145,7 +59,16 @@ public class FlowableAdapter implements Flowable {
             throw new ReadPropertyException(e);
         }
         return result;
-    }
+	}
+
+	@Override
+	public void setCommandQueue(BlockingQueue<Command> commandQueue) throws WritePropertyException {
+        try {
+            this.object.setProperty("FLOWABLE.COMMAND_QUEUE", commandQueue);
+        } catch(Exception e){
+            throw new WritePropertyException(e);
+        }
+	}
 
 
 }

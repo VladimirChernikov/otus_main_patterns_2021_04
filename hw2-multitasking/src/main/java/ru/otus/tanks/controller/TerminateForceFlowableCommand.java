@@ -13,7 +13,7 @@ public class TerminateForceFlowableCommand implements Command {
     
     @Override
     public void execute() {
-        this.flowable.terminateForce();
+        this.flowable.getThread().interrupt();
     }
 
 }
